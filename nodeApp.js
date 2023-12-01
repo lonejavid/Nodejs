@@ -1,38 +1,34 @@
 const http= require('http');
+const fs=require('fs');
 const server=http.createServer((req,res)=>{
+    const url=req.url;
+    const method=req.method;
+    if(url==='/')
+    {
+        const storedData=fs.readFileSync('data.text','utf8');
 
-const url=req.url;
-
- if(url==='/home')
-{
-    res.write('<html>');
-    res.write('<head><title>My first page</title></head>');
-    res.write('<body><h1> Welcome to Homepage</h1></body>');
-    res.write('<html>');
-   return res.end();
-}
-else if(url==='/about')
-{
-    res.write('<html>');
-    res.write('<head><title>My first page</title></head>');
-    res.write('<body> Welcome to About us Page</body>');
-    res.write('<html>');
-   return res.end();
-}
-else if(url==='/node')
-{
-    res.write('<html>');
-    res.write('<head><title>My first page</title></head>');
-    res.write('<body> Welcome to my Nodejs Project</body>');
-    res.write('<html>');
-   return res.end();
-}
-
-res.setHeader('Content-Type','text/html');
-res.write('<html>');
-res.write('<head><title>My first page</title></head>');
-res.write('<body><h1> this is from node app</body>');
-res.write('<html>');
-res.end();
+        res.write(`<html><head><title>my nodejs app</title><body><p>${storedData} <form action="/message" method="POST"><input type="text" name="inputData"><input type="submit" value="send"></form></body></html>`);
+        return res.end();
+    }
+    else if(url==='/message' && method==='POST')
+    {
+        const body=[];
+        req.on('data',(chunk)=>{
+        
+            body.push(chunk);
+        });
+        req.on('end',()=>{
+            const parsedBody=Buffer.concat(body).toString();
+            const parsedData=parsedBody.split('=')[1];
+           
+            fs.writeFileSync('data.text',parsedData);
+        });
+        
+       
+        res.statusCode=302;
+        res.setHeader('location','/');
+        return res.end();
+    }
+    res.write('<html><body><h1> this is heading</h1></body></html>')
 })
-server.listen(3000)
+server.listen(4000,'localhost');
