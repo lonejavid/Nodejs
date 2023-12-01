@@ -1,3 +1,6 @@
-//creating a file by using nodejs file functionality
-const fs=require('fs');
-fs.writeFileSync('dataFile.text',"this file is created by nodejs...");
+const http=require('http');
+const server=http.createServer((req,res)=>{
+    console.log("JAVID")
+    
+})
+server.listen(5000,'localhost');
